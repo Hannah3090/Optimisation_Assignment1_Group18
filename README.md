@@ -108,7 +108,7 @@ src/Q3g/model.py
 Sensitivity analyses reuse the same optimisation model and only modify input parameters through functions defined in:
 
 ```text
-src/scenarios.py```
+src/scenarios.py
 
 ---
 ```
@@ -118,7 +118,6 @@ All figures and tables presented in the report can be reproduced directory from 
 
 ## Base Cases
 
-``
 ### Question 1 Case A
 
 ```bash
