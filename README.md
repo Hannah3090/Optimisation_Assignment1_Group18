@@ -111,14 +111,14 @@ Sensitivity analyses reuse the same optimisation model and only modify input par
 src/scenarios.py```
 
 ---
-
+```
 # Reproducing Results
 
 All figures and tables presented in the report can be reproduced directory from the command line.
 
 ## Base Cases
 
-```
+``
 ### Question 1 Case A
 
 ```bash
