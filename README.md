@@ -191,7 +191,7 @@ Metrics reported:
 - Total disutility
 - Objective value
 - Daily energy consumed
-- Absolute devia*ion
+- Absolute deviation
 
 ----
 ### Q3(f) Daily Energy Requirement Sweep
@@ -244,7 +244,7 @@ Parameter varied:
 
 # Outputs
 
-Each optimi*ation run generates:
+Each optimization run generates:
 
 - Optimal primal variables
 - Objective value
