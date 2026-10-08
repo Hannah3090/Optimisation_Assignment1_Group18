@@ -49,12 +49,12 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   └── Q3g/
 │       └── model.py
 │
-├── main.py
-├── README.md
-├── requirements.txt
-├── environment.yaml
+├── .gitignore
 ├── LICENSE
-└── .gitignore
+├── README.md
+├── environment.yaml
+├── main.py
+└── requirements.txt
 ```
 
 ---
@@ -98,116 +98,114 @@ The code is organised into four stages:
 Each optimisation*formulation is implemented in a se*arate directory:
 
 ```text
-src/Q1/m*del.py
+src/Q1/model.py
 src/Q2_linear/model.py
-src/*2_quadratic/model.py
-src/Q3_energy*model.py
+src/Q2_quadratic/model.py
+src/Q3/model.py
 src/Q3g/model.py
 ```
 
-Sen*itivity analyses reuse the same op*imisation model and only modify in*ut parameters through functions de*ined in:
+Sensitivity analyses reuse the same optimisation model and only modify input parameters through functions defined in:
 
 ```text
-src/scenarios.py*```
+src/scenarios.py```
 
 ---
 
 # Reproducing Results
 
-A*l figures and tables presented in *he report can be reproduced direct*y from the command line.
+All figures and tables presented in the report can be reproduced directory from the command line.
 
-## Base *ases
+## Base bases
 
 ### Question 1 Case A
 
-```ba*h
-python main.py --question Q1_cas*A
+```bash
+python main.py --question Q1_caseA
 ```
 
 ### Question 1 Case B
 
-```b*sh
-python main.py --question Q1_ca*eB
+```bash
+python main.py --question Q1_caseB
 ```
 
-### Question 2(b) Linear D*sutility
+### Question 2(b) Linear Disutility
 
 ```bash
-python main.py -*question Q2_linear
+python main.py --question Q2_linear
 ```
 
 ### Questi*n 2(c) Quadratic Disutility
 
-```ba*h
-python main.py --question Q2_qua*ratic
+```bash
+python main.py --question Q2_quadratic
 ```
 
-### Question 3(f) Minim*m Daily Energy Requirement
+### Question 3(f) Minimum Daily Energy Requirement
 
-```bas*
+```bash
 python main.py --question Q3
 ```
 *### Question 3(g) Battery Model
 
-`*`bash
-python main.py --question Q3*battery
+```bash
+python main.py --question Q3_battery
 ```
 
 ---
 
-## Sensitivity A*alyses
+## Sensitivity Analyses
 
-### Q2(b) Linear Disutilit* Sweep
+### Q2(b) Linear Disutility Sweep
 
 ```bash
-python main.py --q*estion Q2_linear --scenarios --ana*ysis linear_disutility
+python main.py --question Q2_linear --scenarios --analysis linear_disutility
 ```
 
-Parame*er varied:
+Parameter varied:
 
 \[
 c^L
 \]
 
-Metrics rep*rted:
+Metrics reported:
 
 - Procurement cost
-- Total *isutility
+- Total disutility
 - Objective value
-- Dail* energy consumed
-- Absolute deviat*on
-- Number of binding hours
+- Daily energy consumed
+- Absolute deviation
 
 ---
-*### Q2(c) Quadratic Disutility Swe*p
+#### Q2(c) Quadratic Disutility Sweep
 
 ```bash
-python main.py --questi*n Q2_quadratic --scenarios --analy*is quadratic_disutility
+python main.py --question Q2_quadratic --scenarios --analysis quadratic_disutility
 ```
 
-Param*ter varied:
+Parameter varied:
 
 \[
 c^Q
 \]
 
-Metrics re*orted:
+Metrics reported:
 
 - Procurement cost
-- Total*disutility
+- Total disutility
 - Objective value
-- Dai*y energy consumed
+- Daily energy consumed
 - Absolute devia*ion
-- Number of binding hours
 
----*
-### Q3(f) Daily Energy Requiremen* Sweep
+----
+### Q3(f) Daily Energy Requirement Sweep
 
 ```bash
-python main.py --q*estion Q3 --scenarios --analysis e*ergy_requirement
+python main.py --question Q3 --scenarios --analysis energy_requirement
 ```
 
-Parameter va*ied:
+Parameter varied:
 
 \[
 E^{min}
@@ -215,39 +213,39 @@ E^{min}
 
 ---
 
-### Q3(f* Price Spread Sweep
+### Q3(f) Price Spread Sweep
 
 ```bash
-pytho* main.py --question Q3 --scenarios*--analysis price_spread
+python main.py --question Q3 --scenarios --analysis price_spread
 ```
 
 Param*ter varied:
 
-- Electricity price s*read
+- Electricity price spread
 
 ---
 
-### Q3(g) Battery Price*Spread Sweep
+### Q3(g) Battery Price Spread Sweep
 
 ```bash
-python main.*y --question Q3_battery --scenario* --analysis price_spread
+python main.py --question Q3_battery --scenarios --analysis price_spread
 ```
 
-Para*eter varied:
+Parameter varied:
 
-- Electricity price *pread
+- Electricity price spread
 
 ---
 
-### Q3(g) Battery Capa*ity Sweep
+### Q3(g) Battery Capacity Sweep
 
 ```bash
-python main.py *-question Q3_battery --scenarios -*analysis battery_capacity
+python main.py --question Q3_battery --scenarios --analysis battery_capacity
 ```
 
-Par*meter varied:
+Parameter varied:
 
-- Battery energy ca*acity
+- Battery energy capacity
 
 ---
 
@@ -255,67 +253,67 @@ Par*meter varied:
 
 Each optimi*ation run generates:
 
-- Optimal pr*mal variables
+- Optimal primal variables
 - Objective value
-- *rocurement cost
-- Utility/disutili*y values
-- Grid imports and export*
+- Procurement cost
+- Utility/disutility values
+- Grid imports and exports
 - Load consumption
-- PV generatio*
-- Battery schedules (when applica*le)
-- Dual variables (where applic*ble)
+- PV generation
+- Battery schedules (when applicable)
+- Dual variables (where applicable)
 - CSV result files
-- Figures *nd plots
+- Figures and plots
 
-Outputs are automaticall* saved to:
+Outputs are automatically saved to:
 
 ```text
-results/<quest*on>/
+results/<question>/
 ```
 
 ---
 
 # Main Packages
 
-``*text
+```text
 gurobipy
 numpy
 pandas
-matplot*ib
+matplotlib
 ```
 
-Full environment specifica*ions are available in:
+Full environment specifications are available in:
 
 ```text
-re*uirements.txt
+requirements.txt
 ```
 
 and
 
 ```text
-en*ironment.yaml
+environment.yaml
 ```
 
 ---
 
-# Model Ov*rview
+# Model Overview
 
-| Question | Formulation | *mplementation |
-|-----------|-----*------|----------------|
-| Q1 Case*A | Price-elastic consumer | `src/*1/model.py` |
-| Q1 Case B | Price-*lastic consumer (different price r*gime) | `src/Q1/model.py` |
-| Q2(b* | Linear disutility | `src/Q2_lin*ar/model.py` |
-| Q2(c) | Quadratic*disutility | `src/Q2_quadratic/mod*l.py` |
-| Q3(f) | Minimum daily en*rgy requirement | `src/Q3_energy/m*del.py` |
-| Q3(g) | Battery storag* model | `src/Q3g/model.py` |
+| Question | Formulation | Implementation |
+|-----------|------------|----------------|
+| Q1 Case A | Price-elastic consumer | `src/Q1/model.py` |
+| Q1 Case B | Price-elastic consumer (different price regime) | `src/Q1/model.py` |
+| Q2(b) | Linear disutility | `src/Q2_linear/model.py` |
+| Q2(c) | Quadratic_disutility | `src/Q2_quadratic/model.py` |
+| Q3(f) | Minimum daily energy requirement | `src/Q3_energy/model.py` |
+| Q3(g) | Battery storage model | `src/Q3g/model.py` |
 
----*
+----
 # Notes
 
-- Each optimisation form*lation is implemented in a separat* `model.py`.
-- Sensitivity analyse* do not use separate optimisation *odels. They repeatedly solve the s*me formulation with modified param*ter values.
-- Dynamic model select*on is handled automatically throug* `main.py`.
-- All figures and tabl*s in the report can be reproduced *sing the commands listed above.
+- Each optimisation formulation is implemented in a separate `model.py`.
+- Sensitivity analyses do not use separate optimisation models. They repeatedly solve the same formulation with modified parameter values.
+- Dynamic model selection is handled automatically through `main.py`.
+- All figures and tables in the report can be reproducedising the commands listed above.
 
 ---
 Optimization in Modern Power Systems (46750) Assingment I [Technical University of Denmark (DTU)]
