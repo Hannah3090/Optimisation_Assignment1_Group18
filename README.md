@@ -91,11 +91,11 @@ A valid Gurobi licence is required to run the models.
 The code is organised into four stages:
 
 1. Data loading (`src/data_loader.py`)
-2. Model construction (`src/*/model.py`)
-3. Optimisation*and result extraction
-4. Plotting *nd result visualisation (`src/plot*ing.py`)
+2. Model construction (`src/ /model.py`)
+3. Optimisation and result extraction
+4. Plotting and result visualisation (`src/plotting.py`)
 
-Each optimisation*formulation is implemented in a se*arate directory:
+Each optimisation formulation is implemented in a separate directory:
 
 ```text
 src/Q1/model.py
@@ -116,8 +116,9 @@ src/scenarios.py```
 
 All figures and tables presented in the report can be reproduced directory from the command line.
 
-## Base bases
+## Base Cases
 
+```
 ### Question 1 Case A
 
 ```bash
@@ -165,10 +166,8 @@ python main.py --question Q2_linear --scenarios --analysis linear_disutility
 
 Parameter varied:
 
-\[
-c^L
-\]
-
+- Linear disutility coefficient `cL` (DKK/kWh)
+- 
 Metrics reported:
 
 - Procurement cost
@@ -186,9 +185,7 @@ python main.py --question Q2_quadratic --scenarios --analysis quadratic_disutili
 
 Parameter varied:
 
-\[
-c^Q
-\]
+- Quadratic disutility coefficient `cQ` (DKK/kWh²)
 
 Metrics reported:
 
@@ -207,9 +204,7 @@ python main.py --question Q3 --scenarios --analysis energy_requirement
 
 Parameter varied:
 
-\[
-E^{min}
-\]
+- Minimum daily energy requirement `E_min` (kWh)
 
 ---
 
@@ -219,7 +214,7 @@ E^{min}
 python main.py --question Q3 --scenarios --analysis price_spread
 ```
 
-Param*ter varied:
+Parameter varied:
 
 - Electricity price spread
 
