@@ -136,7 +136,7 @@ python main.py --question Q1_caseB
 python main.py --question Q2_linear
 ```
 
-### Questi*n 2(c) Quadratic Disutility
+### Question 2(c) Quadratic Disutility
 
 ```bash
 python main.py --question Q2_quadratic
@@ -147,7 +147,7 @@ python main.py --question Q2_quadratic
 ```bash
 python main.py --question Q3
 ```
-*### Question 3(g) Battery Model
+### Question 3(g) Battery Model
 
 ```bash
 python main.py --question Q3_battery
