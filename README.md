@@ -43,7 +43,7 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   ├── Q2_quadratic/
 │   │   └── model.py
 │   │
-│   ├── Q3_energy/
+│   ├── Q3/
 │   │   └── model.py
 │   │
 │   └── Q3g/
@@ -297,7 +297,7 @@ environment.yaml
 | Q1 Case B | Price-elastic consumer (different price regime) | `src/Q1/model.py` |
 | Q2(b) | Linear disutility | `src/Q2_linear/model.py` |
 | Q2(c) | Quadratic_disutility | `src/Q2_quadratic/model.py` |
-| Q3(f) | Minimum daily energy requirement | `src/Q3_energy/model.py` |
+| Q3(f) | Minimum daily energy requirement | `src/Q3/model.py` |
 | Q3(g) | Battery storage model | `src/Q3g/model.py` |
 
 ----
