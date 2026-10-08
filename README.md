@@ -1,29 +1,24 @@
 # Active Distribution Network with Flexible Residential Consumers
 
-This repository contains the implementation and analysis of the optimisation models developed for the assignment on active distribution networks with flexible residential consumers.
+This repository contains the implementation of the optimisation models developed for the assignment on active distribution networks and flexible residential consumers.
 
-The project investigates the decision-making process of a residential consumer equipped with:
+The project investigates the behaviour of a residential consumer equipped with:
 
-- A flexible electrical load
+- Flexible electrical load
 - Rooftop photovoltaic (PV) generation
 - Grid import/export capability
-- Different consumer preference models
-- A minimum daily energy requirement
-- A battery energy storage system
+- Alternative comfort/disutility models
+- Minimum daily energy requirements
+- Battery energy storage
 
-The optimisation models are implemented in Python using Gurobi.
+All optimisation problems are implemented in Python using Gurobi.
 
 ---
 
 # Repository Structure
 
 ```text
-project/
-│
-├── README.md
-├── requirements.txt
-├── main.py
-│
+.
 ├── data/
 │   ├── params_Q1_caseA.json
 │   ├── params_Q1_caseB.json
@@ -35,7 +30,6 @@ project/
 ├── results/
 │
 ├── src/
-│   │
 │   ├── data_loader.py
 │   ├── plotting.py
 │   ├── scenarios.py
@@ -55,49 +49,75 @@ project/
 │   └── Q3g/
 │       └── model.py
 │
-└── figures/
+├── .gitignore
+├── LICENSE
+├── README.md
+├── environment.yaml
+├── main.py
+└──requirements.txt
+
 ```
 
 ---
 
-# Assignment Structure
+# Installation
+
+## Option 1: Conda Environment (Recommended)
+
+Create the environment from the provided file:
+
+```bash
+conda env create -f environment.yaml
+conda activate <environment-name>
+```
+
+## Option 2: pip
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Solver
+
+The optimisation models are implemented using **Gurobi**.
+
+A valid Gurobi licence is required to solve the optimisation problems.
+
+---
+
+# Questions and Models
 
 ## Question 1
 
-### Q1 Case A
+### Case A
 
-Price-elastic load model with:
+Price-elastic consumer model with low PV marginal cost.
 
-- Constant marginal utility
-- Cheap PV generation
-- Grid import/export
-- Hourly optimisation
-
-Implemented in:
+Implementation:
 
 ```text
 src/Q1/model.py
 ```
 
-Run with:
+Run:
 
 ```bash
 python main.py --question Q1_caseA
 ```
 
----
+### Case B
 
-### Q1 Case B
+Same formulation as Case A with different PV economics.
 
-Same formulation as Case A, but with expensive PV generation.
-
-Implemented in:
+Implementation:
 
 ```text
 src/Q1/model.py
 ```
 
-Run with:
+Run:
 
 ```bash
 python main.py --question Q1_caseB
@@ -105,25 +125,21 @@ python main.py --question Q1_caseB
 
 ---
 
-## Question 2(b)
+## Question 2(b): Linear Disutility
 
-### Linear Disutility Model
-
-Consumer preferences are represented through:
+Disutility represented by:
 
 \[
-D_t = c^L \lvert L_t - \ell_t^{ref}\rvert
+D_t = c^L |L_t - \ell_t^{ref}|
 \]
 
-The model is reformulated as a linear program using an auxiliary deviation variable.
-
-Implemented in:
+Implementation:
 
 ```text
 src/Q2_linear/model.py
 ```
 
-Run the base case:
+Run base case:
 
 ```bash
 python main.py --question Q2_linear
@@ -159,7 +175,7 @@ Run:
 python main.py --question Q2_linear --scenarios --analysis linear_disutility
 ```
 
-Reported metrics:
+Metrics reported:
 
 - Procurement cost
 - Total disutility
@@ -170,25 +186,21 @@ Reported metrics:
 
 ---
 
-## Question 2(c)
+## Question 2(c): Quadratic Disutility
 
-### Quadratic Disutility Model
-
-Consumer preferences represented through:
+Disutility represented by:
 
 \[
-D_t = c^Q (L_t-\ell_t^{ref})^2
+D_t = c^Q(L_t-\ell_t^{ref})^2
 \]
 
-The resulting optimisation problem is a convex quadratic program.
-
-Implemented in:
+Implementation:
 
 ```text
 src/Q2_quadratic/model.py
 ```
 
-Run the base case:
+Run base case:
 
 ```bash
 python main.py --question Q2_quadratic
@@ -226,34 +238,31 @@ Run:
 python main.py --question Q2_quadratic --scenarios --analysis quadratic_disutility
 ```
 
-Reported metrics:
+Metrics reported:
 
 - Procurement cost
 - Total disutility
 - Objective value
 - Daily energy consumed
 - Absolute deviation
-- Number of binding hours
 
 ---
 
-## Question 3(f)
+## Question 3(f): Minimum Daily Energy Requirement
 
-### Minimum Daily Energy Requirement
-
-Based on the quadratic disutility model with the additional constraint:
+Quadratic disutility model with an additional minimum daily energy requirement:
 
 \[
-\sum_t L_t \geq E^{min}
+\sum_t L_t \ge E^{min}
 \]
 
-Implemented in:
+Implementation:
 
 ```text
 src/Q3_energy/model.py
 ```
 
-Run the base case:
+Run base case:
 
 ```bash
 python main.py --question Q3
@@ -261,7 +270,7 @@ python main.py --question Q3
 
 ---
 
-### Sensitivity Analysis 1: Energy Requirement
+### Sensitivity Analysis: Daily Energy Requirement
 
 Parameter varied:
 
@@ -287,9 +296,7 @@ python main.py --question Q3 --scenarios --analysis energy_requirement
 
 ---
 
-### Sensitivity Analysis 2: Price Spread
-
-Price volatility is modified while keeping the daily mean constant.
+### Sensitivity Analysis: Electricity Price Spread
 
 Run:
 
@@ -299,26 +306,24 @@ python main.py --question Q3 --scenarios --analysis price_spread
 
 ---
 
-## Question 3(g)
+## Question 3(g): Battery Storage
 
-### Battery Energy Storage System
+Extension of Question 3 with battery storage.
 
-Extends Question 3 with:
+Additional features:
 
-- Battery charging
-- Battery discharging
-- State-of-charge dynamics
-- Battery power limits
-- Battery energy capacity
+- State of charge dynamics
 - Charging/discharging efficiencies
+- Energy capacity limits
+- Charging/discharging power limits
 
-Implemented in:
+Implementation:
 
 ```text
 src/Q3g/model.py
 ```
 
-Run the base case:
+Run base case:
 
 ```bash
 python main.py --question Q3_battery
@@ -326,9 +331,7 @@ python main.py --question Q3_battery
 
 ---
 
-### Sensitivity Analysis 1: Price Spread
-
-Investigates the impact of electricity price volatility on battery value.
+### Sensitivity Analysis: Price Spread
 
 Run:
 
@@ -338,13 +341,13 @@ python main.py --question Q3_battery --scenarios --analysis price_spread
 
 ---
 
-### Sensitivity Analysis 2: Battery Capacity
+### Sensitivity Analysis: Battery Capacity
 
-Battery capacities tested:
+Battery capacities investigated:
 
 ```text
 2 kWh
-Base case
+Base Case
 8 kWh
 ```
 
@@ -358,22 +361,20 @@ python main.py --question Q3_battery --scenarios --analysis battery_capacity
 
 # Outputs
 
-For every model run, the code produces:
+For each optimisation run, the code generates:
 
 - Optimal primal variables
 - Objective value
 - Procurement cost
-- Utility or disutility value
-- Grid imports
-- Grid exports
+- Utility / disutility values
+- Grid imports and exports
 - Load consumption
-- PV production
+- PV generation
 - Dual variables (where applicable)
-- CSV results
-- Summary files
-- PNG figures
+- Figures (.png)
+- Hourly result tables (.csv)
 
-Results are stored in:
+All outputs are written automatically to:
 
 ```text
 results/<question>/
@@ -381,36 +382,13 @@ results/<question>/
 
 ---
 
-# Dependencies
-
-Main libraries:
-
-```text
-gurobipy
-numpy
-pandas
-matplotlib
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
 # Notes
 
-- Each optimisation formulation is implemented in a separate folder.
-- Every optimisation model is contained in a file named `model.py`.
-- Sensitivity analyses do **not** use different optimisation formulations; they repeatedly solve the same model with modified parameter values.
-- Models are loaded dynamically through `main.py`.
+- Each optimisation formulation is implemented in its own folder.
+- Every formulation uses a file named `model.py`.
+- Sensitivity analyses reuse the corresponding model and only modify input parameters.
+- Models are selected automatically by `main.py` through dynamic imports.
 
 ---
 
-Course Assignment
-
-Technical University of Denmark (DTU)
-
-Active Distribution Networks and Flexible Consumption
+DTU – Optimization in Modern Power Systems Assignment I
