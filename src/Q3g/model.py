@@ -309,7 +309,7 @@ class FlexibleConsumerModel:
             objective=self.m.ObjVal,
             hourly=hourly,
             #duals=duals,
-            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": utility, "total_disutility": total_disutility}
+            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": None, "total_disutility": total_disutility}
         )
 
 _STATUS = {
