@@ -121,7 +121,7 @@ src/scenarios.py
 ```
 # Reproducing Results
 
-All figures and tables presented in the report can be reproduced directly from the command line.
+All figures and tables presented in the report can be reproduced directly from the command line. Each run automatically creates the corresponding results directory if it does not already exist!
 
 ## Base Cases
 
@@ -169,8 +169,6 @@ python main.py --question Q3_battery
 ```bash
 python main.py --question Q2_linear --scenarios --analysis linear_disutility
 ```
-
-# Each run automatically creates the corresponding results directory if it does not already exist.
 
 Example:
 
