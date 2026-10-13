@@ -59,15 +59,23 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 
 ---
 
+# Before Running the Code
+
+After downloading or cloning the repository, navigate to the project root directory:
+
+```bash
+cd Optimisation_Assignment1_Group18-main
+```
+
 # Installation
 
-## Option 1: Conda Environment (Recommended)
+## Option 1: Conda Environment
 
 Create the environment from the provided file:
 
 ```bash
 conda env create -f environment.yaml
-conda activate <environment-name>
+conda activate 46750-a1
 ```
 
 ## Option 2: pip
@@ -113,7 +121,7 @@ src/scenarios.py
 ```
 # Reproducing Results
 
-All figures and tables presented in the report can be reproduced directory from the command line.
+All figures and tables presented in the report can be reproduced directly from the command line.
 
 ## Base Cases
 
@@ -160,6 +168,19 @@ python main.py --question Q3_battery
 
 ```bash
 python main.py --question Q2_linear --scenarios --analysis linear_disutility
+```
+
+# Each run automatically creates the corresponding results directory if it does not already exist.
+
+Example:
+
+```bash
+results/Q1_caseA/
+results/Q1_caseB/
+results/Q2_linear/
+results/Q2_quadratic/
+results/Q3/
+results/Q3_battery/
 ```
 
 Parameter varied:
@@ -305,7 +326,8 @@ environment.yaml
 
 - Each optimisation formulation is implemented in a separate `model.py`.
 - Sensitivity analyses do not use separate optimisation models. They repeatedly solve the same formulation with modified parameter values.
-- Dynamic model selection is handled automatically through `main.py`.
+- The `main.py` script dynamically loads the correct optimisation model based on the --question argument.
+- No manual modification of source files is required to run different questions or sensitivity analyses.
 - All figures and tables in the report can be reproducedising the commands listed above.
 
 ---
