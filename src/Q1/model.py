@@ -243,15 +243,13 @@ class FlexibleConsumerModel:
 
         utility = sum(d.consumption_utility * load[t].X for t in T)
 
-        total_disutility = sum(d.linear_disutility * dev[t].X for t in T)
-
         return Results(
             question=d.question,
             status=status,
             objective=self.m.ObjVal,
             hourly=hourly,
             duals=duals,
-            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": utility, "total_utility":total_disutility}
+            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": utility, "total_disutility": None,}
         )
 
 _STATUS = {
