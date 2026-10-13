@@ -64,7 +64,7 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 After downloading or cloning the repository, navigate to the project root directory:
 
 ```bash
-cd Optimisation_Assignment1_Group18-main
+cd "/Users/XXX/Downloads/Optimisation_Assignment1_Group18-main"
 ```
 
 # Installation
