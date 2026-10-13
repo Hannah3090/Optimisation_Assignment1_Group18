@@ -223,8 +223,6 @@ Parameter varied:
 
 - Minimum daily energy requirement `E_min` (kWh)
 
----
-
 ### Q3(f) Price Spread Sweep
 
 ```bash
