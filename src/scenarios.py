@@ -17,6 +17,8 @@ from __future__ import annotations
 
 from dataclasses import replace
 
+from copy import deepcopy # for disutility functions!!
+
 import numpy as np
 
 from .data_loader import InputData
@@ -49,7 +51,6 @@ def set_tariffs(data: InputData, import_tariff: float | None = None, export_tari
         export_tariff=data.export_tariff if export_tariff is None else export_tariff,
     )
 
-
 def scale_pv(data: InputData, factor: float) -> InputData:
     """Scale the available PV production (e.g. 0.5 for a cloudy day, 0.0 for no PV)."""
     profile = np.clip(data.pv_profile * factor, 0.0, 1.0)
@@ -61,6 +62,7 @@ def set_load_preferences(
     load_max_kWh: float | None = None,
     load_min_kWh: float | None = None,
     min_daily_energy_kWh: float | None = None,
+    battery_capacity_kWh: float | None = None,
 ) -> InputData:
     """Override the hourly load bounds and/or the minimum daily energy requirement."""
     return replace(
@@ -68,4 +70,15 @@ def set_load_preferences(
         load_max_kWh=data.load_max_kWh if load_max_kWh is None else load_max_kWh,
         load_min_kWh=data.load_min_kWh if load_min_kWh is None else load_min_kWh,
         min_daily_energy_kWh=data.min_daily_energy_kWh if min_daily_energy_kWh is None else min_daily_energy_kWh,
+        battery_capacity_kWh=data.battery_capacity_kWh if battery_capacity_kWh is None else battery_capacity_kWh
     )
+
+def set_linear_disutility(data, value):
+    new = deepcopy(data)
+    new.linear_disutility = value
+    return new
+
+def set_quadratic_disutility(data, cQ):
+    new_data = deepcopy(data)
+    new_data.quadratic_disutility = cQ
+    return new_data

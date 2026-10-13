@@ -30,7 +30,7 @@ import numpy as np
 import pandas as pd
 from gurobipy import GRB
 
-from .data_loader import InputData
+from ..data_loader import InputData
 
 
         # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
@@ -135,7 +135,7 @@ class FlexibleConsumerModel:
         # ------------------- Q2 ADDITIONAL BEGINS--------------------------------------------
 
         # Absolute deviation from reference profile:
-        self.var["deviation"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="deviation") # Q2(b)
+        self.var["deviation"] = m.addVars(T, lb=0, vtype=GRB.CONTINUOUS, name="deviation") # Q2(b)
 
         # ------------------- Q2 ADDITIONAL ENDS--------------------------------------------
 
@@ -153,7 +153,7 @@ class FlexibleConsumerModel:
         pv = self.var["pv"]
         imp = self.var["import"]
         exp = self.var["export"]
-
+        
         # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
 
         dev = self.var["deviation"] # Q2(b)
@@ -165,17 +165,7 @@ class FlexibleConsumerModel:
         # Effective export price for the prosumer is that market price - export tariff
         p_exp = d.energy_price - d.export_tariff
 
-        # ------------------- objective function for Q1 --------------------------------
-
-        # m.setObjective(gp.quicksum(d.consumption_utility * load[t] + p_exp[t] * exp[t] - p_imp[t] * imp[t] - d.pv_marginal_cost * pv[t] for t in T), GRB.MAXIMIZE)
-
-        #-------------------------------- Updated objective function for Q2(b) (linear disutility) --------------------------------
-
-        # m.setObjective(gp.quicksum(- d.linear_disutility * dev[t] + p_exp[t] * exp[t] - p_imp[t] * imp[t] - d.pv_marginal_cost * pv[t] for t in T), GRB.MAXIMIZE) # it's linked with constraints (8)&(9)&(10)
-
-        #-------------------------------- Updated objective function for Q2(c) (quadratic disutility) and valid for Q3--------------------------------
-
-        m.setObjective(gp.quicksum(- d.quadratic_disutility * (load[t] - d.reference_load[t]) * (load[t] - d.reference_load[t]) + p_exp[t] * exp[t] - p_imp[t] * imp[t] - d.pv_marginal_cost * pv[t] for t in T), GRB.MAXIMIZE) # Q2(c)
+        m.setObjective(gp.quicksum(- d.linear_disutility * dev[t] + p_exp[t] * exp[t] - p_imp[t] * imp[t] - d.pv_marginal_cost * pv[t] for t in T), GRB.MAXIMIZE) # it's linked with constraints (8)&(9)&(10)
 
         # --- Constraints -------------------------------------------------------------
         # TODO: add the constraints of your formulation.
@@ -213,22 +203,13 @@ class FlexibleConsumerModel:
         # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
        
         # (8): Positive deviation: 
-        # self.con["dev_pos"] = m.addConstrs((load[t] - d.reference_load[t] - dev[t] <= 0 for t in T), name="dev_pos") # Q2(b)
+        self.con["dev_pos"] = m.addConstrs((load[t] - d.reference_load[t] - dev[t] <= 0 for t in T), name="dev_pos") # Q2(b)
         
         # (9): Negative deviation: 
-        # self.con["dev_pos"] = m.addConstrs((d.reference_load[t] - load[t] - dev[t] <= 0 for t in T), name="dev_neg") # Q2(b)
-
-        # (10): Non-negative deviation:
-        # self.con["dev_nonneg"] = m.addConstrs((dev[t] >= 0 for t in T), name="dev_nonneg") # Q2(b)
+        self.con["dev_neg"] = m.addConstrs((d.reference_load[t] - load[t] - dev[t] <= 0 for t in T), name="dev_neg") # Q2(b)
 
         # ------------------- Q2 ADDITIONAL ENDS --------------------------------------------
 
-        # ------------------- Q3 ADDITIONAL BEGINS ------------------------------------------
-
-        self.con["min_daily_energy"] = m.addConstr(gp.quicksum(load[t] for t in T) >= d.min_daily_energy_kWh, name="min_daily_energy")
-
-        # ------------------- Q3 ADDITIONAL ENDS --------------------------------------------
-        
         m.update()
         return self
 
@@ -243,6 +224,10 @@ class FlexibleConsumerModel:
             )
         m.optimize()
         status = _status_name(m.Status)
+        if m.Status == GRB.INFEASIBLE:
+            m.computeIIS()
+            m.write("infeasible.ilp")
+
         if m.Status != GRB.OPTIMAL:
             raise RuntimeError(f"Optimisation ended with status {status}. Check the model (m.computeIIS() helps for infeasibility).")
         return self._extract_results(status)
@@ -291,28 +276,13 @@ class FlexibleConsumerModel:
         # Effective export price for the prosumer is that market price - export tariff
         p_exp = d.energy_price - d.export_tariff
 
-
-        # Procurement cost exists for ALL models!!
         procurement_cost = (sum(p_imp[t] * imp[t].X for t in T) + sum(d.pv_marginal_cost * pv[t].X for t in T) - sum(p_exp[t] * exp[t].X for t in T))
 
-        # Metrics depending on model!
-        utility = None
-        total_disutility = None
+        total_disutility = sum(d.linear_disutility * dev[t].X for t in T)
 
-        # Q1
-        if d.consumption_utility is not None:
+        absolute_deviation = sum(dev[t].X for t in T)
 
-            utility = sum(d.consumption_utility * load[t].X for t in T)
-
-        # Q2 Linear
-        elif d.linear_disutility is not None:
-
-            total_disutility = sum(d.linear_disutility * dev[t].X for t in T)
-
-        # Q2 Quadratic + Q3
-        elif d.quadratic_disutility is not None:
-
-            total_disutility = sum(d.quadratic_disutility * (load[t].X - d.reference_load[t])**2 for t in T)
+        daily_energy_consumed = sum(load[t].X for t in T)
 
         return Results(
             question=d.question,
@@ -320,8 +290,8 @@ class FlexibleConsumerModel:
             objective=self.m.ObjVal,
             hourly=hourly,
             duals=duals,
-            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": utility, "total_disutility": total_disutility}
-        )
+            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": None, "total_disutility": total_disutility,
+                   "absolute_deviation": absolute_deviation, "daily_energy_consumed": daily_energy_consumed,})
 
 
 _STATUS = {
@@ -330,6 +300,9 @@ _STATUS = {
     GRB.NUMERIC: "NUMERIC", GRB.INTERRUPTED: "INTERRUPTED",
 }
 
-
 def _status_name(code: int) -> str:
     return _STATUS.get(code, f"STATUS_{code}")
+
+
+
+

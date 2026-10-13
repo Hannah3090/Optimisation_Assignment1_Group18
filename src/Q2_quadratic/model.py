@@ -30,7 +30,7 @@ import numpy as np
 import pandas as pd
 from gurobipy import GRB
 
-from .data_loader import InputData
+from ..data_loader import InputData
 
 
 @dataclass
@@ -109,10 +109,51 @@ class FlexibleConsumerModel:
         # * naming the families "import", "export", "load", "pv" makes the standard plots of
         #   src/plotting.py work out of the box.
 
+        # --- OUR TASK -----------------------------------------------------------------
+
+        # ------------------- Q1 -------------------------------------------------------
+
+        # ALL VARIABLES ARE DECLARED AS FREE RIGHT NOW, IT WILL BE PUSHED THEIR BOUNDS IN THE CONSTRAINTS SECTION!!!!
+
+        # Hourly electrical load consumption for each hour (kWh/h):
+        self.var["load"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="load") 
+
+        # Utilized photovoltaic generation (kWh/h):
+        self.var["pv"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="pv")
+
+        # Electricity imported from the distribution grid (kWh/h):
+        self.var["import"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="import")
+
+        # Electricity exported to the distribution grid (kWh/h)
+        self.var["export"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="export")
+        
+        # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
+
+        self.var["deviation"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="dev") # Q2(b)
+
         # --- Objective ---------------------------------------------------------------
         # TODO: express the objective function and its direction (GRB.MINIMIZE or GRB.MAXIMIZE):
         #   m.setObjective(gp.quicksum(<expression in t> for t in T), <direction>)
         # The input-data attributes (with units) are documented in src/data_loader.py (InputData).
+
+        # --- OUR TASK -----------------------------------------------------------------
+
+        # ------------------- Q1 -------------------------------------------------------
+
+        # For simplicity, we will use the following notation: 
+        load = self.var["load"]
+        pv = self.var["pv"]
+        imp = self.var["import"]
+        exp = self.var["export"]
+
+        dev = self.var["deviation"] #Q2(b)
+        
+        # Effective import price for the prosumer is that market price + import tariff
+        p_imp = d.energy_price + d.import_tariff 
+        # Effective export price for the prosumer is that market price - export tariff
+        p_exp = d.energy_price - d.export_tariff
+
+        m.setObjective(gp.quicksum(- d.quadratic_disutility * (load[t] - d.reference_load[t]) **2 + p_exp[t] * exp[t] - p_imp[t] * imp[t] - d.pv_marginal_cost * pv[t] for t in T), GRB.MAXIMIZE,)
 
         # --- Constraints -------------------------------------------------------------
         # TODO: add the constraints of your formulation.
@@ -122,6 +163,40 @@ class FlexibleConsumerModel:
         #       (<lhs expression> - <rhs expression> <= 0 for t in T), name="<name>")
         # Pattern for a single constraint (dual returned as a scalar):
         #   self.con["<name>"] = m.addConstr(<lhs expression> - <rhs expression> <= 0, name="<name>")
+
+        # --- OUR TASK -----------------------------------------------------------------
+
+        # (1): Load lower bound:
+        self.con["load_min"] = m.addConstrs((d.load_min_kWh - load[t] <= 0 for t in T), name="load_min")
+
+        # (2): Load upper bound:
+        self.con["load_max"] = m.addConstrs((load[t] - d.load_max_kWh <= 0 for t in T), name="load_max")
+
+        # (3): PV lower bound:
+        self.con["pv_min"] = m.addConstrs((-pv[t] <= 0 for t in T), name="pv_min")
+
+        # (4): PV upper bound:
+        self.con["pv_max"] = m.addConstrs((pv[t] - d.pv_available[t] <= 0 for t in T), name="pv_max")
+
+        # (5): Export non-negativity:
+        self.con["export_min"] = m.addConstrs((-exp[t] <= 0 for t in T), name="export_min")
+
+        # (6): Import non-negativity:
+        self.con["import_min"] = m.addConstrs((-imp[t] <= 0 for t in T), name="import_min")
+
+        # (7): Power balance:
+        self.con["power_balance"] = m.addConstrs((load[t] + exp[t] - pv[t] - imp[t] == 0 for t in T), name="power_balance")
+        #alternatively (7): self.con["power_balance"] = m.addConstrs((load[t] + exp[t] == pv[t] + impt[t] for t in T), name="power_balance") [gen == demand]
+
+        # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
+       
+        # (8): Positive deviation: 
+        self.con["dev_pos"] = m.addConstrs((load[t] - d.reference_load[t] - dev[t] <= 0 for t in T), name="dev_pos") # Q2(b)
+        
+        # (9): Negative deviation: 
+        self.con["dev_neg"] = m.addConstrs((d.reference_load[t] - load[t] - dev[t] <= 0 for t in T), name="dev_neg") # Q2(b)
+
+        # ------------------- Q2 ADDITIONAL ENDS --------------------------------------------
 
         m.update()
         return self
@@ -137,6 +212,10 @@ class FlexibleConsumerModel:
             )
         m.optimize()
         status = _status_name(m.Status)
+        if m.Status == GRB.INFEASIBLE:
+            m.computeIIS()
+            m.write("infeasible.ilp")
+
         if m.Status != GRB.OPTIMAL:
             raise RuntimeError(f"Optimisation ended with status {status}. Check the model (m.computeIIS() helps for infeasibility).")
         return self._extract_results(status)
@@ -168,14 +247,37 @@ class FlexibleConsumerModel:
                 # No duals available (e.g. model with integer variables)
                 pass
 
+        # ------------------- Q1 -------------------------------------------------------
+
+        # For simplicity, we will use the following notation, AGAIN: 
+        load = self.var["load"]
+        pv = self.var["pv"]
+        imp = self.var["import"]
+        exp = self.var["export"]
+
+        dev = self.var["deviation"] #Q2(b)
+
+        # Effective import price for the prosumer is that market price + import tariff
+        p_imp = d.energy_price + d.import_tariff 
+        # Effective export price for the prosumer is that market price - export tariff
+        p_exp = d.energy_price - d.export_tariff
+
+        procurement_cost = (sum(p_imp[t] * imp[t].X for t in T) + sum(d.pv_marginal_cost * pv[t].X for t in T) - sum(p_exp[t] * exp[t].X for t in T))
+
+        total_disutility = sum(d.quadratic_disutility * (load[t].X - d.reference_load[t]) **2 for t in T)
+
+        absolute_deviation = sum(dev[t].X for t in T)
+
+        daily_energy_consumed = sum(load[t].X for t in T)
+
         return Results(
             question=d.question,
             status=status,
             objective=self.m.ObjVal,
             hourly=hourly,
             duals=duals,
-            meta={"scalar_variables": scalars},
-        )
+            meta={"scalar_variables": scalars, "procurement_cost": procurement_cost, "utility": None, "total_disutility": total_disutility,
+                   "absolute_deviation": absolute_deviation, "daily_energy_consumed": daily_energy_consumed,})
 
 
 _STATUS = {
@@ -184,6 +286,9 @@ _STATUS = {
     GRB.NUMERIC: "NUMERIC", GRB.INTERRUPTED: "INTERRUPTED",
 }
 
-
 def _status_name(code: int) -> str:
     return _STATUS.get(code, f"STATUS_{code}")
+
+
+
+
