@@ -184,7 +184,7 @@ results/Q3_battery/
 Parameter varied:
 
 - Linear disutility coefficient `cL` (DKK/kWh)
-- 
+
 Metrics reported:
 
 - Procurement cost
@@ -213,6 +213,7 @@ Metrics reported:
 - Absolute deviation
 
 ----
+
 ### Q3(f) Daily Energy Requirement Sweep
 
 ```bash
