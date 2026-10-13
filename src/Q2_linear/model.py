@@ -30,7 +30,7 @@ import numpy as np
 import pandas as pd
 from gurobipy import GRB
 
-from .data_loader import InputData
+from ..data_loader import InputData
 
 
         # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
