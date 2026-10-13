@@ -146,7 +146,7 @@ class FlexibleConsumerModel:
         imp = self.var["import"]
         exp = self.var["export"]
 
-        dev = self.var["deviation"]
+        dev = self.var["deviation"] #Q2(b)
         
         # Effective import price for the prosumer is that market price + import tariff
         p_imp = d.energy_price + d.import_tariff 
@@ -254,6 +254,8 @@ class FlexibleConsumerModel:
         pv = self.var["pv"]
         imp = self.var["import"]
         exp = self.var["export"]
+
+        dev = self.var["deviation"] #Q2(b)
 
         # Effective import price for the prosumer is that market price + import tariff
         p_imp = d.energy_price + d.import_tariff 
