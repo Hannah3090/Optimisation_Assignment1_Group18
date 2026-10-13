@@ -10,9 +10,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .data_loader import InputData
-from .model import Results
+from typing import Any
 
+from .data_loader import InputData
+
+Results = Any
 
 def _finish(fig: plt.Figure, save_to: Path | str | None) -> plt.Figure:
     fig.tight_layout()
