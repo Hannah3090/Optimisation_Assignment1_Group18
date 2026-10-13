@@ -171,7 +171,7 @@ def load_model_class(question: str):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--question", default="Q3_battery", choices=list_questions(), help="data case to use")
+    parser.add_argument("--question", default="Q1_caseA", choices=list_questions(), help="data case to use")
 
     parser.add_argument("--analysis", default=None, choices=["linear_disutility", "quadratic_disutility", "energy_requirement", "price_spread", "battery_capacity",], help="sensitivity analysis type")
 
