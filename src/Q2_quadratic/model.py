@@ -33,11 +33,6 @@ from gurobipy import GRB
 from ..data_loader import InputData
 
 
-        # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
-
-
-        # ------------------- Q2 ADDITIONAL ENDS --------------------------------------------
-
 @dataclass
 class Results:
     """Primal and dual solution of one model run."""
@@ -131,6 +126,10 @@ class FlexibleConsumerModel:
 
         # Electricity exported to the distribution grid (kWh/h)
         self.var["export"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="export")
+        
+        # ------------------- Q2 ADDITIONAL BEGINS ------------------------------------------
+
+        self.var["deviation"] = m.addVars(T, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="dev") # Q2(b)
 
         # --- Objective ---------------------------------------------------------------
         # TODO: express the objective function and its direction (GRB.MINIMIZE or GRB.MAXIMIZE):
@@ -146,6 +145,8 @@ class FlexibleConsumerModel:
         pv = self.var["pv"]
         imp = self.var["import"]
         exp = self.var["export"]
+
+        dev = self.var["deviation"]
         
         # Effective import price for the prosumer is that market price + import tariff
         p_imp = d.energy_price + d.import_tariff 
