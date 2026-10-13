@@ -102,7 +102,7 @@ def get_scenarios(question: str, analysis: str, base):
                    "cQ_20.00": set_quadratic_disutility(base, 20.00),
                    "cQ_50.00": set_quadratic_disutility(base, 50.00),}
 
-    elif question == "Q3_energy":
+    elif question == "Q3":
     
         if analysis == "energy_requirement":
 
