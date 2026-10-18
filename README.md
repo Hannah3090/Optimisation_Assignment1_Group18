@@ -43,7 +43,8 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   │
 │   ├── Q2_quadratic/
 │   │   └── model.py
-├── Q2_nonseparable/
+│   │
+│   ├── Q2_nonseparable/
 │   └── model.py
 │   │
 │   ├── Q3/
