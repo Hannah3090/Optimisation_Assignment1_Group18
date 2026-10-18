@@ -24,6 +24,7 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   ├── params_Q1_caseB.json
 │   ├── params_Q2_linear.json
 │   ├── params_Q2_quadratic.json
+│   ├── params_Q2_nonseparable.json
 │   ├── params_Q3.json
 │   └── params_Q3_battery.json
 │
@@ -42,6 +43,8 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   │
 │   ├── Q2_quadratic/
 │   │   └── model.py
+├── Q2_nonseparable/
+│   └── model.py
 │   │
 │   ├── Q3/
 │   │   └── model.py
@@ -64,7 +67,7 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 After downloading or cloning the repository, navigate to the project root directory:
 
 ```bash
-cd "/Users/XXX/Downloads/Optimisation_Assignment1_Group18-main"
+cd <path-to-repository>
 ```
 
 # Installation
@@ -109,6 +112,7 @@ Each optimisation formulation is implemented in a separate directory:
 src/Q1/model.py
 src/Q2_linear/model.py
 src/Q2_quadratic/model.py
+src/Q2_nonseparable/model.py
 src/Q3/model.py
 src/Q3g/model.py
 ```
@@ -148,6 +152,11 @@ python main.py --question Q2_linear
 ```bash
 python main.py --question Q2_quadratic
 ```
+### Question 2(e) Non-Separable Disutility
+
+```bash
+python main.py --question Q2_nonseparable
+```
 
 ### Question 3(f) Minimum Daily Energy Requirement
 
@@ -170,6 +179,8 @@ python main.py --question Q3_battery
 python main.py --question Q2_linear --scenarios --analysis linear_disutility
 ```
 
+--- 
+
 Example:
 
 ```bash
@@ -177,6 +188,7 @@ results/Q1_caseA/
 results/Q1_caseB/
 results/Q2_linear/
 results/Q2_quadratic/
+results/Q2_nonseparable/
 results/Q3/
 results/Q3_battery/
 ```
@@ -194,7 +206,7 @@ Metrics reported:
 - Absolute deviation
 
 ---
-#### Q2(c) Quadratic Disutility Sweep
+### Q2(c) Quadratic Disutility Sweep
 
 ```bash
 python main.py --question Q2_quadratic --scenarios --analysis quadratic_disutility
@@ -212,7 +224,41 @@ Metrics reported:
 - Daily energy consumed
 - Absolute deviation
 
-----
+---
+### Q2(e) Aggregated Disutility Sweep
+
+```bash
+python main.py --question Q2_quadratic --scenarios --analysis accum_disutility
+```
+
+Parameter varied:
+
+-  Aggregated disutility coefficient `c_agg` (DKK/kWh²)
+
+Metrics reported: 
+
+- Procurement cost
+- Total disutility
+- Objective value
+- Daily energy consumed
+- Absolute deviation
+- Number of binding hours
+
+### Q2(e) Linear Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_linear --scenarios --analysis price_structure
+```
+### Q2(e) Quadratic Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_quadratic --scenarios --analysis price_structure
+```
+### Q2(e) Aggregated Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_nonseparable --scenarios --analysis price_structure
+```
 
 ### Q3(f) Daily Energy Requirement Sweep
 
@@ -315,6 +361,7 @@ environment.yaml
 | Q1 Case B | Price-elastic consumer (different price regime) | `src/Q1/model.py` |
 | Q2(b) | Linear disutility | `src/Q2_linear/model.py` |
 | Q2(c) | Quadratic_disutility | `src/Q2_quadratic/model.py` |
+| Q2(e) | Nonseparable_disutility | `src/Q2_nonseperable/model.py` |
 | Q3(f) | Minimum daily energy requirement | `src/Q3/model.py` |
 | Q3(g) | Battery storage model | `src/Q3g/model.py` |
 
