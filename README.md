@@ -188,6 +188,7 @@ results/Q1_caseA/
 results/Q1_caseB/
 results/Q2_linear/
 results/Q2_quadratic/
+results/Q2_nonseparable/
 results/Q3/
 results/Q3_battery/
 ```
@@ -224,7 +225,7 @@ Metrics reported:
 - Absolute deviation
 
 ---
-#### Q2(c) Quadratic Disutility Sweep
+#### Q2(e) Aggregated Disutility Sweep
 
 ```bash
 python main.py --question Q2_quadratic --scenarios --analysis accum_disutility
