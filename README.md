@@ -45,7 +45,7 @@ All optimisation problems are formulated and solved using **Python** and **Gurob
 │   │   └── model.py
 │   │
 │   ├── Q2_nonseparable/
-│   └── model.py
+│   │   └── model.py
 │   │
 │   ├── Q3/
 │   │   └── model.py
