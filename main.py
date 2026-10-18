@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from src.data_loader import load_question, list_questions
-from src.plotting import plot_duals, plot_inputs, plot_scenario_comparison, plot_schedule
+from src.plotting import plot_duals, plot_inputs, plot_scenario_comparison, plot_schedule, plot_battery_operation
 from src.scenarios import scale_prices, scale_pv, set_tariffs, set_load_preferences, set_linear_disutility, set_quadratic_disutility, set_accum_disutility # these are added for scenarios!
 from importlib import import_module
 
@@ -62,6 +62,9 @@ def run_base_case(question: str, out: Path, show: bool):
 
     results.save(out)
     plot_schedule(results, data, save_to=out / "schedule.png")
+
+    if question == "Q3_battery":
+    plot_battery_operation(results, save_to=out / "battery_operation.png")
     
     if question != "Q3_battery":
         plot_duals(results, data, save_to=out / "duals.png")
