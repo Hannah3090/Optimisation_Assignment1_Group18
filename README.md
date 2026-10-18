@@ -244,6 +244,22 @@ Metrics reported:
 - Absolute deviation
 - Number of binding hours
 
+### Q2(e) Linear Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_linear --scenarios --analysis price_structure
+```
+### Q2(e) Quadratic Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_quadratic --scenarios --analysis price_structure
+```
+### Q2(e) Aggregated Disutility with Profile A and Profile B.
+
+```bash
+python main.py --question Q2_nonseparable --scenarios --analysis price_structure
+```
+
 ### Q3(f) Daily Energy Requirement Sweep
 
 ```bash
