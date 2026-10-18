@@ -223,21 +223,19 @@ Metrics reported:
 - Daily energy consumed
 - Absolute deviation
 
-----
+---
+#### Q2(c) Quadratic Disutility Sweep
 
-# 6. Price Structure Experiment 
+```bash
+python main.py --question Q2_quadratic --scenarios --analysis accum_disutility
+```
 
-The bonus-question implementation includes a numerical experiment comparing different electricity-price structures while maintaining the same average daily price. Two profiles are evaluated: 
+Parameter varied:
 
-- Profile A: alternating high and low prices
-- Profile B: prolonged low-price and high-price periods
-
-The experiment compares:
-- Linear disutility model
-- Quadratic disutility model
-- Non-separable disutility model
+-  Aggregated disutility coefficient `c_agg` (DKK/kWh²)
 
 Metrics reported: 
+
 - Procurement cost
 - Total disutility
 - Objective value
