@@ -82,3 +82,9 @@ def set_quadratic_disutility(data, cQ):
     new_data = deepcopy(data)
     new_data.quadratic_disutility = cQ
     return new_data
+
+def set_accum_disutility(data, c_accum):
+    new_data = deepcopy(data)
+    new_data.accum_disutility = c_accum 
+    return new_data
+
