@@ -206,7 +206,7 @@ Metrics reported:
 - Absolute deviation
 
 ---
-#### Q2(c) Quadratic Disutility Sweep
+### Q2(c) Quadratic Disutility Sweep
 
 ```bash
 python main.py --question Q2_quadratic --scenarios --analysis quadratic_disutility
@@ -225,7 +225,7 @@ Metrics reported:
 - Absolute deviation
 
 ---
-#### Q2(e) Aggregated Disutility Sweep
+### Q2(e) Aggregated Disutility Sweep
 
 ```bash
 python main.py --question Q2_quadratic --scenarios --analysis accum_disutility
