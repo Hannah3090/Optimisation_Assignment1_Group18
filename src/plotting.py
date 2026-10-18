@@ -109,3 +109,56 @@ def plot_scenario_comparison(
     ax.set(ylabel=ylabel, title=f"Scenario comparison - {metric}")
     ax.tick_params(axis="x", rotation=20)
     return _finish(fig, save_to)
+
+def plot_battery_operation(results, save_to=None):
+    
+    df = results.hourly.copy()
+
+    df["battery_charging"] = df["battery_charging"].where(df["battery_charging"] > 1e-6, 0)
+
+    df["battery_discharging"] = df["battery_discharging"].where(df["battery_discharging"] > 1e-6, 0)
+
+    df["state_of_charge"] = df["state_of_charge"].where(df["state_of_charge"] > 1e-6, 0)
+
+    df["battery_power"] = (df["battery_charging"] - df["battery_discharging"])
+
+    fig, ax1 = plt.subplots(figsize=(7.2, 4.5))
+
+    line1 = ax1.step(df.index, df["battery_power"], where="mid", linewidth=2.5, color="tab:blue", label="Battery power")
+
+    ax1.axhline(0, color="black", linewidth=0.8, linestyle="--")
+
+    ax1.set_xlabel("Hour of day")
+    ax1.set_ylabel("Battery power [kW]")
+
+    ax1.set_xticks(range(0, 24, 2))
+    ax1.set_xlim(0, 23)
+
+    max_power = max(abs(df["battery_power"].min()), abs(df["battery_power"].max()))
+
+    max_state = max(abs(df["state_of_charge"].min()), abs(df["state_of_charge"].max()))
+
+    ax1.set_ylim(-max_power * 1.2, max_state * 1.2)
+
+    ax1.grid(axis="y", linestyle=":", linewidth=0.8, alpha=0.5)
+
+    ax2 = ax1.twinx()
+
+    line2 = ax2.plot(df.index, df["state_of_charge"], color="tab:orange", marker="o", markersize=4, linewidth=2.2, label="State of charge")
+
+    ax2.set_ylabel("State of charge [kWh]")
+
+    lines = [line1[0], line2[0]]
+    labels = [line.get_label() for line in lines]
+
+    ax1.legend(lines, labels, loc="lower center", bbox_to_anchor=(0.5, 1.02), ncol=2, frameon=False)
+
+    ax1.spines["top"].set_visible(False)
+    ax2.spines["top"].set_visible(False)
+
+    plt.tight_layout()
+
+    if save_to is not None:
+        plt.savefig(save_to, dpi=300, bbox_inches="tight")
+
+    return fig
